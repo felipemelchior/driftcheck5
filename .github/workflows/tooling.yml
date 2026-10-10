@@ -167,6 +167,11 @@ jobs:
       - name: Build the release folder and ZIP
         run: make app
 
+      # The scene's usual release file: an ELF payload for the loader on port 9021
+      # that installs the app folder with the modes the console needs.
+      - name: Build the installer payload
+        run: bash tools/build-installer.sh
+
       - name: Report compiler cache statistics
         if: always()
         run: ccache --show-stats
@@ -186,7 +191,7 @@ jobs:
           retention-days: 1
 
       - name: Write release checksums
-        run: cd dist && sha256sum "$TITLE_ID.zip" > SHA256SUMS
+        run: cd dist && sha256sum "$TITLE_ID.zip" DriftCheck.elf > SHA256SUMS
 
       # Signed provenance: this ZIP was built by this workflow from this commit. Anyone can check a
       # downloaded copy with `gh attestation verify <file> -R <owner>/<repo>`. Not for pull requests
@@ -195,7 +200,9 @@ jobs:
         if: github.event_name != 'pull_request' && !github.event.repository.private
         uses: actions/attest@1e69f48acb82d1966a394da916b4c1698aa569d6 # v4.2.2
         with:
-          subject-path: dist/${{ env.TITLE_ID }}.zip
+          subject-path: |
+            dist/${{ env.TITLE_ID }}.zip
+            dist/DriftCheck.elf
 
       - name: Upload build
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
@@ -203,6 +210,7 @@ jobs:
           name: ${{ steps.label.outputs.artifact }}
           path: |
             dist/${{ env.TITLE_ID }}.zip
+            dist/DriftCheck.elf
             dist/SHA256SUMS
           if-no-files-found: error
           compression-level: 0
@@ -234,30 +242,33 @@ jobs:
           set -euo pipefail
           cd release
           mapfile -d '' files < <(find . -type f -print0)
-          if (( ${#files[@]} != 2 )); then
-            echo "Expected exactly one app-folder ZIP and SHA256SUMS." >&2
+          if (( ${#files[@]} != 3 )); then
+            echo "Expected one app-folder ZIP, DriftCheck.elf and SHA256SUMS." >&2
             exit 1
           fi
           shopt -s nullglob
           folder_zips=(PPSA*.zip dist/PPSA*.zip)
+          installers=(DriftCheck.elf dist/DriftCheck.elf)
           checksums=(SHA256SUMS dist/SHA256SUMS)
-          if (( ${#folder_zips[@]} != 1 || ${#checksums[@]} != 1 )); then
-            echo "Release files must be one app-folder ZIP and SHA256SUMS." >&2
+          if (( ${#folder_zips[@]} != 1 || ${#installers[@]} != 1 || ${#checksums[@]} != 1 )); then
+            echo "Release files must be one app-folder ZIP, DriftCheck.elf and SHA256SUMS." >&2
             exit 1
           fi
           (cd "$(dirname "${checksums[0]}")" && sha256sum -c SHA256SUMS)
           echo "folder_zip=${folder_zips[0]}" >> "$GITHUB_OUTPUT"
+          echo "installer=${installers[0]}" >> "$GITHUB_OUTPUT"
           echo "checksum=${checksums[0]}" >> "$GITHUB_OUTPUT"
 
       - name: Publish GitHub release
         env:
           GH_TOKEN: ${{ github.token }}
           FOLDER_ZIP: ${{ steps.package.outputs.folder_zip }}
+          INSTALLER: ${{ steps.package.outputs.installer }}
           CHECKSUM: ${{ steps.package.outputs.checksum }}
         shell: bash
         run: |
           set -euo pipefail
-          assets=("release/$FOLDER_ZIP" "release/$CHECKSUM")
+          assets=("release/$INSTALLER" "release/$FOLDER_ZIP" "release/$CHECKSUM")
           TAG=$GITHUB_REF_NAME
           # CI is the source of truth for release files: create the release, or fill one that
           # has no ZIP yet, and never replace a ZIP that is already published.
@@ -266,7 +277,7 @@ jobs:
               --repo "$GITHUB_REPOSITORY" \
               --verify-tag \
               --generate-notes \
-              --title "PS5 Native App Boilerplate $TAG"
+              --title "DriftCheck $TAG"
             exit 0
           fi
           existing=$(gh release view "$TAG" --repo "$GITHUB_REPOSITORY" --json assets --jq '.assets[].name')
@@ -276,5 +287,5 @@ jobs:
               exit 0
             fi
           done <<< "$existing"
-          # Notes written in advance, or a draft: add the two files, leave title and notes alone.
+          # Notes written in advance, or a draft: add the files, leave title and notes alone.
           gh release upload "$TAG" "${assets[@]}" --repo "$GITHUB_REPOSITORY"

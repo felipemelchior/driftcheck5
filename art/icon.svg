@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="40%" r="75%">
+      <stop offset="0" stop-color="#1d2a4a"/>
+      <stop offset="1" stop-color="#0a0d19"/>
+    </radialGradient>
+  </defs>
+  <rect width="512" height="512" fill="url(#bg)"/>
+  <line x1="71" y1="236" x2="441" y2="236" stroke="#28344e" stroke-width="3"/>
+  <line x1="256" y1="51" x2="256" y2="421" stroke="#28344e" stroke-width="3"/>
+  <circle cx="256" cy="236" r="150" fill="none" stroke="#6e788c" stroke-width="6"/>
+  <circle cx="406.0" cy="236.0" r="7" fill="#3cdc64"/><circle cx="404.7" cy="255.6" r="7" fill="#3cdc64"/><circle cx="380.6" cy="269.4" r="7" fill="#ffd200"/><circle cx="375.2" cy="285.4" r="7" fill="#ffd200"/><circle cx="367.7" cy="300.5" r="7" fill="#ffd200"/><circle cx="358.3" cy="314.5" r="7" fill="#ffd200"/><circle cx="347.2" cy="327.2" r="7" fill="#ffd200"/><circle cx="334.5" cy="338.3" r="7" fill="#ffd200"/><circle cx="320.5" cy="347.7" r="7" fill="#ffd200"/><circle cx="313.4" cy="374.6" r="7" fill="#3cdc64"/><circle cx="294.8" cy="380.9" r="7" fill="#3cdc64"/><circle cx="275.6" cy="384.7" r="7" fill="#3cdc64"/><circle cx="256.0" cy="386.0" r="7" fill="#3cdc64"/><circle cx="236.4" cy="384.7" r="7" fill="#3cdc64"/><circle cx="217.2" cy="380.9" r="7" fill="#3cdc64"/><circle cx="198.6" cy="374.6" r="7" fill="#3cdc64"/><circle cx="181.0" cy="365.9" r="7" fill="#3cdc64"/><circle cx="164.7" cy="355.0" r="7" fill="#3cdc64"/><circle cx="149.9" cy="342.1" r="7" fill="#3cdc64"/><circle cx="137.0" cy="327.3" r="7" fill="#3cdc64"/><circle cx="126.1" cy="311.0" r="7" fill="#3cdc64"/><circle cx="117.4" cy="293.4" r="7" fill="#3cdc64"/><circle cx="111.1" cy="274.8" r="7" fill="#3cdc64"/><circle cx="107.3" cy="255.6" r="7" fill="#3cdc64"/><circle cx="106.0" cy="236.0" r="7" fill="#3cdc64"/><circle cx="107.3" cy="216.4" r="7" fill="#3cdc64"/><circle cx="111.1" cy="197.2" r="7" fill="#3cdc64"/><circle cx="117.4" cy="178.6" r="7" fill="#3cdc64"/><circle cx="126.1" cy="161.0" r="7" fill="#3cdc64"/><circle cx="137.0" cy="144.7" r="7" fill="#3cdc64"/><circle cx="149.9" cy="129.9" r="7" fill="#3cdc64"/><circle cx="164.7" cy="117.0" r="7" fill="#3cdc64"/><circle cx="181.0" cy="106.1" r="7" fill="#3cdc64"/><circle cx="198.6" cy="97.4" r="7" fill="#3cdc64"/><circle cx="217.2" cy="91.1" r="7" fill="#3cdc64"/><circle cx="236.4" cy="87.3" r="7" fill="#3cdc64"/><circle cx="256.0" cy="86.0" r="7" fill="#3cdc64"/><circle cx="275.6" cy="87.3" r="7" fill="#3cdc64"/><circle cx="294.8" cy="91.1" r="7" fill="#3cdc64"/><circle cx="313.4" cy="97.4" r="7" fill="#3cdc64"/><circle cx="331.0" cy="106.1" r="7" fill="#3cdc64"/><circle cx="347.3" cy="117.0" r="7" fill="#3cdc64"/><circle cx="362.1" cy="129.9" r="7" fill="#3cdc64"/><circle cx="375.0" cy="144.7" r="7" fill="#3cdc64"/><circle cx="385.9" cy="161.0" r="7" fill="#3cdc64"/><circle cx="394.6" cy="178.6" r="7" fill="#3cdc64"/><circle cx="400.9" cy="197.2" r="7" fill="#3cdc64"/><circle cx="404.7" cy="216.4" r="7" fill="#3cdc64"/>
+  <circle cx="256" cy="236" r="34" fill="none" stroke="#ff8c00" stroke-width="6" stroke-dasharray="10 7"/>
+  <circle cx="278" cy="250" r="22" fill="#00dcff"/>
+  <text x="256" y="474" text-anchor="middle" font-family="DejaVu Sans, sans-serif" font-weight="bold"
+        font-size="60" letter-spacing="2" fill="#ffd200">DRIFT<tspan fill="#f0f0f0">CHECK</tspan></text>
+</svg>

@@ -14,7 +14,8 @@ read -r -a flags <<< "${HOST_TEST_CXXFLAGS:--std=c++20 -O2 -Wall -Wextra -Wpedan
 read -r -a ldflags <<< "${HOST_TEST_LDFLAGS:--Wl,--gc-sections}"
 objects=()
 for source in "$gtest/googletest/src/gtest-all.cc" "$gtest/googletest/src/gtest_main.cc" \
-    "$root/tests/test_demo_renderer.cpp" "$root/src/demo_renderer.cpp"; do
+    "$root/tests/test_demo_renderer.cpp" "$root/src/demo_renderer.cpp" \
+    "$root/tests/test_stick_analysis.cpp" "$root/src/stick_analysis.cpp"; do
     object="$build/${source##*/}.o"
     args=(-std=c++20 -O2)
     [[ $source == "$gtest/"* ]] || args=("${flags[@]}")

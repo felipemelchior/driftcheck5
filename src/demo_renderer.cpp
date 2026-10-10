@@ -10,6 +10,10 @@
 #include "demo_renderer.hpp"
 
 #include <array>
+#ifdef DRIFTCHECK_HOST_PREVIEW
+#include <cstdio>
+#include <cstdlib>
+#endif
 #include <cstddef>
 #include <cstdint>
 #include <memory>
@@ -91,28 +95,60 @@ struct Glyph
     std::array<std::uint8_t, 7> rows;
 };
 
-constexpr std::array<Glyph, 42> glyphs{{
-    {' ', {0, 0, 0, 0, 0, 0, 0}},        {'.', {0, 0, 0, 0, 0, 12, 12}},
-    {':', {0, 12, 12, 0, 12, 12, 0}},    {'-', {0, 0, 0, 31, 0, 0, 0}},
-    {'%', {24, 25, 2, 4, 8, 19, 3}},     {'/', {1, 1, 2, 4, 8, 16, 16}},
-    {'0', {14, 17, 19, 21, 25, 17, 14}}, {'1', {4, 12, 4, 4, 4, 4, 14}},
-    {'2', {14, 17, 1, 2, 4, 8, 31}},     {'3', {30, 1, 1, 14, 1, 1, 30}},
-    {'4', {2, 6, 10, 18, 31, 2, 2}},     {'5', {31, 16, 16, 30, 1, 1, 30}},
-    {'6', {14, 16, 16, 30, 17, 17, 14}}, {'7', {31, 1, 2, 4, 8, 8, 8}},
-    {'8', {14, 17, 17, 14, 17, 17, 14}}, {'9', {14, 17, 17, 15, 1, 1, 14}},
-    {'A', {14, 17, 17, 31, 17, 17, 17}}, {'B', {30, 17, 17, 30, 17, 17, 30}},
-    {'C', {14, 17, 16, 16, 16, 17, 14}}, {'D', {30, 17, 17, 17, 17, 17, 30}},
-    {'E', {31, 16, 16, 30, 16, 16, 31}}, {'F', {31, 16, 16, 30, 16, 16, 16}},
-    {'G', {14, 17, 16, 23, 17, 17, 14}}, {'H', {17, 17, 17, 31, 17, 17, 17}},
-    {'I', {31, 4, 4, 4, 4, 4, 31}},      {'J', {7, 2, 2, 2, 18, 18, 12}},
-    {'K', {17, 18, 20, 24, 20, 18, 17}}, {'L', {16, 16, 16, 16, 16, 16, 31}},
-    {'M', {17, 27, 21, 21, 17, 17, 17}}, {'N', {17, 25, 21, 19, 17, 17, 17}},
-    {'O', {14, 17, 17, 17, 17, 17, 14}}, {'P', {30, 17, 17, 30, 16, 16, 16}},
-    {'Q', {14, 17, 17, 17, 21, 18, 13}}, {'R', {30, 17, 17, 30, 20, 18, 17}},
-    {'S', {15, 16, 16, 14, 1, 1, 30}},   {'T', {31, 4, 4, 4, 4, 4, 4}},
-    {'U', {17, 17, 17, 17, 17, 17, 14}}, {'V', {17, 17, 17, 17, 17, 10, 4}},
-    {'W', {17, 17, 17, 21, 21, 21, 10}}, {'X', {17, 17, 10, 4, 10, 17, 17}},
-    {'Y', {17, 17, 10, 4, 4, 4, 4}},     {'Z', {31, 1, 2, 4, 8, 16, 31}},
+constexpr std::array<Glyph, 52> glyphs{{
+    {' ', {0, 0, 0, 0, 0, 0, 0}},
+    {'.', {0, 0, 0, 0, 0, 12, 12}},
+    {':', {0, 12, 12, 0, 12, 12, 0}},
+    {'-', {0, 0, 0, 31, 0, 0, 0}},
+    {'%', {24, 25, 2, 4, 8, 19, 3}},
+    {'/', {1, 1, 2, 4, 8, 16, 16}},
+    {'0', {14, 17, 19, 21, 25, 17, 14}},
+    {'1', {4, 12, 4, 4, 4, 4, 14}},
+    {'2', {14, 17, 1, 2, 4, 8, 31}},
+    {'3', {30, 1, 1, 14, 1, 1, 30}},
+    {'4', {2, 6, 10, 18, 31, 2, 2}},
+    {'5', {31, 16, 30, 1, 1, 17, 14}},
+    {'6', {14, 16, 16, 30, 17, 17, 14}},
+    {'7', {31, 1, 2, 4, 8, 8, 8}},
+    {'8', {14, 17, 17, 14, 17, 17, 14}},
+    {'9', {14, 17, 17, 15, 1, 1, 14}},
+    {'A', {14, 17, 17, 31, 17, 17, 17}},
+    {'B', {30, 17, 17, 30, 17, 17, 30}},
+    {'C', {14, 17, 16, 16, 16, 17, 14}},
+    {'D', {30, 17, 17, 17, 17, 17, 30}},
+    {'E', {31, 16, 16, 30, 16, 16, 31}},
+    {'F', {31, 16, 16, 30, 16, 16, 16}},
+    {'G', {14, 17, 16, 23, 17, 17, 14}},
+    {'H', {17, 17, 17, 31, 17, 17, 17}},
+    {'I', {31, 4, 4, 4, 4, 4, 31}},
+    {'J', {7, 2, 2, 2, 18, 18, 12}},
+    {'K', {17, 18, 20, 24, 20, 18, 17}},
+    {'L', {16, 16, 16, 16, 16, 16, 31}},
+    {'M', {17, 27, 21, 21, 17, 17, 17}},
+    {'N', {17, 25, 21, 19, 17, 17, 17}},
+    {'O', {14, 17, 17, 17, 17, 17, 14}},
+    {'P', {30, 17, 17, 30, 16, 16, 16}},
+    {'Q', {14, 17, 17, 17, 21, 18, 13}},
+    {'R', {30, 17, 17, 30, 20, 18, 17}},
+    {'S', {15, 16, 16, 14, 1, 1, 30}},
+    {'T', {31, 4, 4, 4, 4, 4, 4}},
+    {'U', {17, 17, 17, 17, 17, 17, 14}},
+    {'V', {17, 17, 17, 17, 17, 10, 4}},
+    {'W', {17, 17, 17, 21, 21, 21, 10}},
+    {'X', {17, 17, 10, 4, 10, 17, 17}},
+    {'Y', {17, 17, 10, 4, 4, 4, 4}},
+    {'Z', {31, 1, 2, 4, 8, 16, 31}},
+    // Only the lowercase letters of "Hello World Benignus"; x-height on rows 2-6.
+    {'d', {1, 1, 13, 19, 17, 19, 13}},
+    {'e', {0, 0, 14, 17, 31, 16, 14}},
+    {'g', {0, 0, 15, 17, 15, 1, 14}},
+    {'i', {4, 0, 12, 4, 4, 4, 14}},
+    {'l', {12, 4, 4, 4, 4, 4, 14}},
+    {'n', {0, 0, 22, 25, 17, 17, 17}},
+    {'o', {0, 0, 14, 17, 17, 17, 14}},
+    {'r', {0, 0, 22, 25, 16, 16, 16}},
+    {'s', {0, 0, 15, 16, 14, 1, 30}},
+    {'u', {0, 0, 17, 17, 17, 19, 13}},
 }};
 
 class File final
@@ -393,6 +429,42 @@ void read_asset_text(const char *path, std::span<char> destination,
     detail::present(draw, ready_message, true);
 }
 
+#ifdef DRIFTCHECK_HOST_PREVIEW
+// Host preview (tools/preview.sh): no VideoOut. Draws DRIFTCHECK_PREVIEW_FRAMES frames into
+// memory, as the console would, and writes the last one to DRIFTCHECK_PREVIEW_OUT as a PPM.
+[[noreturn]] void detail::present(DrawScene draw, std::string_view ready_message,
+                                  bool every_frame) noexcept
+{
+    (void)ready_message;
+    (void)every_frame;
+    // The console buffer is tiled (tiled_byte_offset), so the preview keeps the same layout.
+    static std::array<std::uint32_t, frame_bytes / sizeof(std::uint32_t)> pixels{};
+    Canvas canvas{pixels.data()};
+    const char *frames_text = std::getenv("DRIFTCHECK_PREVIEW_FRAMES");
+    const int frames = frames_text != nullptr ? std::atoi(frames_text) : 1;
+    for (int frame = 0; frame < frames; ++frame)
+        draw(canvas);
+    const char *path = std::getenv("DRIFTCHECK_PREVIEW_OUT");
+    std::FILE *out = std::fopen(path != nullptr ? path : "preview.ppm", "wb");
+    if (out == nullptr)
+        std::exit(1);
+    std::fprintf(out, "P6\n%u %u\n255\n", frame_width, frame_height);
+    const auto *bytes = reinterpret_cast<const std::uint8_t *>(pixels.data());
+    for (unsigned y = 0; y < frame_height; ++y)
+        for (unsigned x = 0; x < frame_width; ++x)
+        {
+            const std::uint32_t pixel =
+                *reinterpret_cast<const std::uint32_t *>(bytes + tiled_byte_offset(x, y));
+            const std::array<unsigned char, 3> rgb{
+                static_cast<unsigned char>(pixel & 0xffU),
+                static_cast<unsigned char>((pixel >> 8U) & 0xffU),
+                static_cast<unsigned char>((pixel >> 16U) & 0xffU)};
+            std::fwrite(rgb.data(), 1, rgb.size(), out);
+        }
+    std::fclose(out);
+    std::exit(0);
+}
+#else
 [[noreturn]] void detail::present(DrawScene draw, std::string_view ready_message,
                                   bool every_frame) noexcept
 {
@@ -467,4 +539,5 @@ void read_asset_text(const char *path, std::span<char> destination,
     for (;;)
         (void)sceKernelUsleep(1000000);
 }
+#endif
 } // namespace ps5::demo

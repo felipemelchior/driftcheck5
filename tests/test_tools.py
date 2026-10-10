@@ -115,8 +115,10 @@ class ToolTests(unittest.TestCase):
             text=True,
         )
         self.assertEqual(result.returncode, 0, result.stderr)
-        self.assertIn("/data/homebrew/PPSA99999/", result.stdout)
-        self.assertIn("PPSA99999.{ffpkg,ffpfsc}", result.stdout)
+        # The repository's own title, not the template's: `make init` changes it.
+        title = json.loads((ROOT / "sce_sys/param.json").read_text())["titleId"]
+        self.assertIn(f"/data/homebrew/{title}/", result.stdout)
+        self.assertIn(f"{title}.{{ffpkg,ffpfsc}}", result.stdout)
         self.assertIn("no network request was sent", result.stdout)
 
     def test_deploy_dry_run_uses_mocked_build_and_no_network(self):
@@ -235,7 +237,7 @@ class ToolTests(unittest.TestCase):
         self.assertLess(build.index("BUILD_LABEL must be"), build.index("ninja_run\n\napp="))
         self.assertIn('"/app0/build-label.txt"', (ROOT / "src/main.cpp").read_text())
 
-    def test_automation_builds_the_zip_only(self):
+    def test_automation_builds_the_zip_and_the_installer(self):
         workflow = (ROOT / ".github/workflows/tooling.yml").read_text(encoding="utf-8")
         # The image formats are gone: nothing that builds may name them or their tools again.
         build_files = (
@@ -255,8 +257,14 @@ class ToolTests(unittest.TestCase):
         ):
             self.assertFalse((ROOT / "tools" / name).exists(), name)
         self.assertIn("run: make app", workflow)
-        self.assertIn('sha256sum "$TITLE_ID.zip" > SHA256SUMS', workflow)
-        self.assertIn('assets=("release/$FOLDER_ZIP" "release/$CHECKSUM")', workflow)
+        # DriftCheck releases the app-folder ZIP (stores install from it) and the installer
+        # payload (tools/build-installer.sh), the file the scene sends to port 9021.
+        self.assertIn("run: bash tools/build-installer.sh", workflow)
+        self.assertLess(workflow.index("run: make app"), workflow.index("tools/build-installer.sh"))
+        self.assertIn('sha256sum "$TITLE_ID.zip" DriftCheck.elf > SHA256SUMS', workflow)
+        self.assertIn(
+            'assets=("release/$INSTALLER" "release/$FOLDER_ZIP" "release/$CHECKSUM")', workflow
+        )
         # The release job creates a release, or fills one that has no ZIP; it never replaces,
         # deletes or rewrites anything on a release that exists.
         for forbidden in ("--clobber", "delete-asset", "gh release edit"):
@@ -269,7 +277,7 @@ class ToolTests(unittest.TestCase):
         self.assertIn("::warning title=Release files not from this run::", publish)
         self.assertLess(publish.index("gh release create"), publish.index("::warning"))
         self.assertLess(publish.index("::warning"), publish.index("gh release upload"))
-        # The finished ZIP, and only the ZIP, is attested before it is uploaded: pinned action,
+        # The finished ZIP and installer are attested before they are uploaded: pinned action,
         # never for a pull request or in a private repository.
         attest = workflow.index("- name: Attest the release ZIP")
         upload = workflow.index("- name: Upload build")
@@ -282,7 +290,11 @@ class ToolTests(unittest.TestCase):
         self.assertIn(
             "if: github.event_name != 'pull_request' && !github.event.repository.private", step
         )
-        self.assertIn("subject-path: dist/${{ env.TITLE_ID }}.zip\n", step)
+        self.assertIn(
+            "subject-path: |\n            dist/${{ env.TITLE_ID }}.zip\n"
+            "            dist/DriftCheck.elf\n",
+            step,
+        )
         self.assertNotIn("SHA256SUMS", step)
         build_job = workflow[workflow.index("\n  build:") : workflow.index("\n  release:")]
         for permission in ("contents: read", "id-token: write", "attestations: write"):

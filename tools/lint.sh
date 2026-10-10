@@ -25,8 +25,12 @@ for file in "${repository_files[@]}"; do
             ;;
         *.c|*.cc|*.cpp|*.h|*.hpp|*.ld|*.py|*.ps1|*.sh|*.yml|*.yaml|Makefile|.clang-format|.clang-tidy|.env.example)
             header=$(head -n 20 "$file")
-            grep -Fq ps5-native-app-boilerplate <<<"$header"
-            grep -Fq 'Copyright (C) 2026 BlackBearReloaded' <<<"$header"
+            # Boilerplate files keep its attribution; DriftCheck's own files carry its name.
+            if grep -Fq ps5-native-app-boilerplate <<<"$header"; then
+                grep -Fq 'Copyright (C) 2026 BlackBearReloaded' <<<"$header"
+            else
+                grep -Fq 'DriftCheck' <<<"$header" || { echo "no attribution header: $file" >&2; exit 2; }
+            fi
             grep -Fq 'SPDX-License-Identifier: GPL-3.0-or-later' <<<"$header"
             ((checked += 1))
             ;;
