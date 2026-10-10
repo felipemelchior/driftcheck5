@@ -246,10 +246,12 @@ jobs:
             echo "Expected one app-folder ZIP, DriftCheck.elf and SHA256SUMS." >&2
             exit 1
           fi
+          # nullglob drops only patterns that match nothing: a plain name stays in the array
+          # whether or not the file exists, so every candidate is written as a pattern.
           shopt -s nullglob
           folder_zips=(PPSA*.zip dist/PPSA*.zip)
-          installers=(DriftCheck.elf dist/DriftCheck.elf)
-          checksums=(SHA256SUMS dist/SHA256SUMS)
+          installers=(DriftCheck.el[f] dist/DriftCheck.el[f])
+          checksums=(SHA256SUM[S] dist/SHA256SUM[S])
           if (( ${#folder_zips[@]} != 1 || ${#installers[@]} != 1 || ${#checksums[@]} != 1 )); then
             echo "Release files must be one app-folder ZIP, DriftCheck.elf and SHA256SUMS." >&2
             exit 1
