@@ -13,8 +13,8 @@
 | [Microsoft DirectXTex](https://github.com/microsoft/DirectXTex) | `texconv` presentation-image preparation |
 | [FFmpeg](https://ffmpeg.org/) | Developer-supplied selection-audio preparation |
 | [ShadowMountPlus](https://github.com/drakmor/ShadowMountPlus) | Directory-style deployment and hardware validation |
-| [ArkSama/PS5-Lapy-JB-Daemon](https://github.com/ArkSama/PS5-Lapy-JB-Daemon) | Original Lapy project and owned-root design |
-| [mpereiraesaa/PS5-Lapy-JB-Daemon](https://github.com/mpereiraesaa/PS5-Lapy-JB-Daemon) | Exact-title one-shot helper and cooperative elevation protocol |
+| [ps5-native-app-boilerplate](https://github.com/blackbearreloaded/ps5-native-app-boilerplate) | The template DriftCheck is built on: build, FSELF signing, runtime shim and renderer (GPL-3.0-or-later) |
+| [ps5-payload-dev/SDL](https://github.com/ps5-payload-dev/SDL) | Reference for the controller sample layout in `src/pad.cpp` |
 
 ## Native build dependencies
 
@@ -45,27 +45,6 @@ SHA-256 `65fab701d9829d38cb77c14acdc431d2108bfdbf8979e40eb8ae567edf10b27c`.
 It remains under ignored `.deps/test/`, retains its BSD-3-Clause license, and
 is not linked into any PS5 application, runtime, or package artifact.
 
-## Optional PS5-Lapy-JB-Daemon integration
-
-The sandbox-elevation build fetches
-[mpereiraesaa's PS5-Lapy-JB-Daemon](https://github.com/mpereiraesaa/PS5-Lapy-JB-Daemon)
-at commit `54a095c0f19161825e845daa760a03b446e654fa`, invokes its unmodified
-`owned-helper` target for the selected application's exact title and packages
-the generated helper ELF with Lapy's MIT license. The shared protocol header
-published upstream is LGPL-2.1-or-later; this repository's application-side
-wire implementation is GPL-3.0-or-later.
-
-Lapy was created by
-[ArkSama / Team PHU](https://github.com/ArkSama/PS5-Lapy-JB-Daemon). Credit
-belongs to ArkSama, mpereiraesaa and the Lapy contributors. No Lapy kernel
-source is copied or modified here.
-
-The helper build also uses the pinned `ps5log/1` header from
-[mpereiraesaa/ps5-agc-gears](https://github.com/mpereiraesaa/ps5-agc-gears/tree/1ae1f9182abd2770c131b97419034fb85173c2dc/native/ps5log),
-GPL-3.0-or-later, and the official PS5 Payload SDK v0.40. Those build inputs
-remain under ignored `.deps/lapy/`; the normal application toolchain remains
-the separately pinned Payload SDK v0.42.
-
 ## Optional PacBrew dependencies
 
 When selected through `PACBREW_*` build variables, the build downloads the prebuilt ports image
@@ -74,35 +53,7 @@ release `v0.40.2`, verifies its published SHA-256, and extracts only the
 `target/user/homebrew` prefix under ignored `.deps/pacbrew/`. It does not
 replace the pinned SDK or install files globally. PacBrew recipes and every
 linked third-party library retain their upstream licenses; applications must
-review those terms before redistribution.
-
-The update-check example (`make update-check-example`) selects `libcurl`, which
-statically links these PacBrew libraries into the example title. Its build
-output stays under ignored `dist/` and is not distributed by this repository; an
-application that ships the update check ships them and must carry their notices:
-
-| Component | Version in PacBrew v0.40.2 | License |
-| --- | --- | --- |
-| [libcurl](https://curl.se/) | 8.18.0 | curl license (MIT/X derivative) |
-| [OpenSSL](https://www.openssl.org/) | 3.5.2 | Apache License 2.0 |
-| [zlib](https://zlib.net/) | 1.3.2 | zlib license |
-| [zstd](https://github.com/facebook/zstd) | 1.5.6 | BSD-3-Clause (dual-licensed with GPL-2.0) |
-| [libpsl](https://github.com/rockdaboot/libpsl) | 0.21.5 | MIT; built-in Public Suffix List data MPL-2.0 |
-
-`examples/update-check/console_curl.c`, which makes these libraries run in a
-native title, is original BlackBearReloaded code (GPL-3.0-or-later), taken from
-the ProsperoRadio and ProsperoLichess projects. Its `gmtime_r` follows Howard
-Hinnant's public-domain `civil_from_days` algorithm.
-
-## Vendored miniz
-
-`third_party/miniz/` holds [miniz](https://github.com/richgel999/miniz) 3.0.2
-(commit `293d4db1b7d0ffee9756d035b9ac6f7431ef8492`), MIT, unmodified, with its
-`LICENSE`; `SOURCE.json` records each file's SHA-256. Only the self-update
-helper (`examples/self-update-helper`) and its host test link it; an
-application that ships that helper ships miniz and must carry its notice. The
-helper's archive validation and file helpers are original BlackBearReloaded
-code (GPL-3.0-or-later), taken from the ProsperoStore project.
+review those terms before redistribution. DriftCheck selects none.
 
 ## Independently authored runtime shim
 
@@ -116,11 +67,12 @@ Original ps5-native-app-boilerplate code is Copyright (C) 2026
 BlackBearReloaded and licensed under GPL-3.0-or-later. Source and script files
 carry matching SPDX identifiers.
 
-## Original presentation assets
+## DriftCheck code and assets
 
-The BlackBear icon, selection artwork, and default selection track
-`sce_sys/snd0.at9` are original assets supplied by BlackBearReloaded, Copyright
-(C) 2026 BlackBearReloaded, and distributed under GPL-3.0-or-later. The track
-is titled `Night Drive`.
+DriftCheck's own sources (`src/main.cpp`, `src/pad.*`, `src/stick_analysis.*`,
+`installer/`, `tools/build-installer.sh`, `tools/preview*`) and its icon
+(`art/icon.svg`, rendered to `sce_sys/icon0.png`) are Copyright (C) 2026 Felipe
+Melchior and licensed under GPL-3.0-or-later. The boilerplate's presentation
+assets are not included.
 
 No proprietary runtime module, encryption key, or game file is included.

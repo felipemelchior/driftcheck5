@@ -72,4 +72,6 @@ PY
 out="$root/dist/DriftCheck.elf"
 "$sdk/bin/prospero-clang" -O2 -Wall -Wextra -I"$work" \
     -o "$out" "$root/installer/installer.c" "$work/installer_data.S"
+# The loader reads the payload up to its section table; trailing bytes break the protocol.
+python3 "$root/tools/validate-loader-elf.py" "$out"
 echo "installer: $out ($(stat -c %s "$out") bytes, DriftCheck $version for $title)"

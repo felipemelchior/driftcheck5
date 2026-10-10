@@ -79,7 +79,7 @@ On Linux or WSL with Clang (18 or newer), lld, Ninja, Make and Python 3:
 
 ```bash
 make                            # dist/PPSA98766/ and dist/PPSA98766.zip
-bash tools/build-installer.sh   # dist/DriftCheck.elf
+make installer                  # dist/DriftCheck.elf (builds the app first)
 make test                       # host unit and integration tests
 bash tools/preview.sh           # build/preview.png, the screen with a fake controller
 ```
@@ -95,9 +95,9 @@ against the boilerplate's hardware-tested sample size and field offsets.
 ## Credits
 
 - Built on [ps5-native-app-boilerplate](https://github.com/blackbearreloaded/ps5-native-app-boilerplate)
-  by BlackBearReloaded: the build, FSELF signing, clean-room runtime and renderer. Its tooling,
-  documentation and examples are kept under `tools/`, `tooling/`, `docs/` and `examples/`;
-  DriftCheck adds the installer, the preview and its own sources next to them.
+  by BlackBearReloaded: the build, FSELF signing, clean-room runtime and renderer, kept under
+  `tools/`, `tooling/` and `runtime/`. Its documentation and examples were left out; they are
+  in the boilerplate's repository.
 - [ps5-payload-dev](https://github.com/ps5-payload-dev): the payload SDK, and the controller
   structures of its SDL port.
 

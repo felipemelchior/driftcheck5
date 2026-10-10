@@ -11,9 +11,8 @@
 namespace
 {
 // scePadRead's sample, 120 bytes. The layout is the PS5 SDL port's PS5_PadData
-// (src/joystick/ps5/SDL_ps5joystick.h); the boilerplate's self-update example,
-// which ran on hardware, agrees on the size and on where `connected` and the
-// timestamp sit.
+// (src/joystick/ps5/SDL_ps5joystick.h). The boilerplate's self-update example, which
+// ran on hardware, agrees on the size and on where `connected` and the timestamp sit.
 struct RawTouch
 {
     std::uint16_t x;

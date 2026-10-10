@@ -23,15 +23,11 @@ mapfile -d '' host_sources < <(find "$root/tooling/native" -maxdepth 1 \
 "$tidy" "${host_sources[@]}" --quiet --warnings-as-errors='*' -- \
     -std=c++20 -I"$zlib"
 
-# The examples include each other's kit headers by name, and vendored code by folder.
-example_includes=(-I"$root/examples/update-check" -I"$root/examples/self-update"
-    -isystem "$root/third_party")
-
 gtest=$(bash "$root/tools/setup-test-dependencies.sh")
 mapfile -d '' test_sources < <(find "$root/tests" -maxdepth 1 -type f -name '*.cpp' -print0)
 if (( ${#test_sources[@]} )); then
     "$tidy" "${test_sources[@]}" --quiet --warnings-as-errors='*' -- \
-        -std=c++20 -I"$root/src" "${example_includes[@]}" \
+        -std=c++20 -I"$root/src" \
         -isystem "$gtest/googletest/include" -idirafter "$sdk/target/include"
 fi
 
@@ -41,25 +37,11 @@ if (( ${#app_c_sources[@]} )); then
         -std=c11 -isystem "$sdk/target/include"
 fi
 
-# The update-check example uses libcurl's headers from the pinned PacBrew prefix.
-pacbrew_include="$(bash "$root/tools/setup-pacbrew-dependencies.sh" --all)/user/homebrew/include"
-
-mapfile -d '' example_c_sources < <(find "$root/examples" -type f -name '*.c' -print0)
-if (( ${#example_c_sources[@]} )); then
-    "$tidy" "${example_c_sources[@]}" --quiet --warnings-as-errors='*' -- \
-        -std=c11 --target=x86_64-sie-ps5 "${example_includes[@]}" \
-        -isystem "$sdk/target/include" -isystem "$pacbrew_include"
-fi
-
 mapfile -d '' app_cpp_sources < <(find "$root/src" -type f \
     \( -name '*.cc' -o -name '*.cpp' \) -print0)
-mapfile -d '' example_cpp_sources < <(find "$root/examples" -type f \
-    \( -name '*.cc' -o -name '*.cpp' \) -print0)
-app_cpp_sources+=("${example_cpp_sources[@]}")
 app_cpp_sources+=("$root/tooling/native/app_crt.cpp" "$root/tooling/native/app_cpp_runtime.cpp")
 if (( ${#app_cpp_sources[@]} )); then
     "$tidy" "${app_cpp_sources[@]}" --quiet --warnings-as-errors='*' -- \
-        -std=c++20 -fno-exceptions -fno-rtti --target=x86_64-sie-ps5 "${example_includes[@]}" \
-        -isystem "$sdk/target/include/c++/v1" -isystem "$sdk/target/include" \
-        -isystem "$pacbrew_include"
+        -std=c++20 -fno-exceptions -fno-rtti --target=x86_64-sie-ps5 \
+        -isystem "$sdk/target/include/c++/v1" -isystem "$sdk/target/include"
 fi

@@ -100,8 +100,8 @@ std::uint16_t touch_max_y = 1079;
 
 int log_file = -1;
 
-// Written by the build when BUILD_LABEL is set (docs/PULL_REQUEST_BUILDS.md): a build
-// that is not a release says which one it is.
+// Written by the build when BUILD_LABEL is set (the boilerplate's docs/PULL_REQUEST_BUILDS.md): a
+// build that is not a release says which one it is.
 std::array<char, 48> build_label{};
 
 std::uint64_t now_ms() noexcept

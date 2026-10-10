@@ -106,7 +106,7 @@ jobs:
           echo "CONTENT_VERSION=$content_version" >> "$GITHUB_ENV"
 
       # A pull request's build is named by its number and its own commit, on the
-      # artifact and inside the app (docs/PULL_REQUEST_BUILDS.md); the version in
+      # artifact and inside the app (the boilerplate's docs/PULL_REQUEST_BUILDS.md); the version in
       # param.json stays the release's.
       - name: Name this build
         id: label
@@ -131,30 +131,6 @@ jobs:
 
       - name: Run host integration tests
         run: make test-integration
-
-      - name: Check Lapy cooperative elevation client
-        run: make test-elevation
-
-      - name: Build filesystem capability example
-        run: |
-          make sandbox-elevation-example
-          test ! -e dist/PPSA99790/assets
-
-      - name: Check update-check parsing and decisions
-        run: make test-update-check
-
-      - name: Build update-check example
-        run: |
-          make update-check-example
-          test -f dist/PPSA99780/assets/targets.txt
-
-      - name: Check self-update engine and helper
-        run: make test-self-update
-
-      - name: Build self-update example
-        run: |
-          make self-update-example
-          test -f dist/PPSA99782/self-updater.elf
 
       - name: Reproduce clean-room runtime shim
         run: make libc
