@@ -4,6 +4,10 @@
 
 <h3 align="center">A controller tester for jailbroken PS5s: find stick drift without leaving the console.</h3>
 
+<p align="center">
+  <a href="https://recompstore.com/game/PPSA98766"><img src="https://recompstore.com/assets/press/badge-dark.svg" alt="Get it on RecompStore"></a>
+</p>
+
 ---
 
 DriftCheck is a native PS5 homebrew app that shows everything your DualSense reports and
